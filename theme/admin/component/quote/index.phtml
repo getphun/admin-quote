@@ -1,0 +1,78 @@
+<?php $this->partial('shared/header'); ?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    Total result: <?= number_format($total, 0, '.','.'); ?>
+                </div>
+            </div>
+            
+            <?php if($groups): ?>
+            <div class="list-group">
+                <?php foreach($groups as $grp): ?>
+                <a class="list-group-item<?= ($grp==$group?' active':'') ?>" href="?group=<?= $grp ?>"><?= $grp ?></a>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+        <div class="col-md-9">
+            <div class="page-header">
+                <?php if($this->can_i->create_quote): ?>
+                <a class="btn btn-primary pull-right" href="<?= $this->router->to('adminQuoteEdit', ['id'=>0], ['ref'=>$here]) ?>">Create New</a>
+                <?php endif; ?>
+                <h3>Quotes</h3>
+            </div>
+            
+            <?php if($quotes): ?>
+            <?php
+                $can_delete     = $this->can_i->remove_quote;
+                $can_edit       = $this->can_i->update_quote;
+            ?>
+            
+            <div class="list-group">
+                <?php foreach($quotes as $quote): ?>
+                <div class="list-group-item">
+                
+                    <?php if($can_delete || $can_edit): ?>
+                    <div class="btn-group btn-group-xs pull-right">
+                        <?php if($can_edit): ?>
+                        <a href="<?= $this->router->to('adminQuoteEdit', ['id'=>$quote->id], ['ref'=>$here]) ?>" class="btn btn-default" title="Edit">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        </a>
+                        <?php endif; ?>
+                        <?php if($can_delete): ?>
+                        <button id="quote-<?= $quote->id ?>" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-xs">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="quote-<?= $quote->id ?>">
+                            <li>
+                                <a href="<?= $this->router->to('adminQuoteRemove', ['id'=>$quote->id], ['next'=>$here]) ?>" data-confirm="Delete Confirmation" data-confirm-message="Are you sure want to delete this quote? This action can't be undone." title="Delete" aria-label="Delete">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                </a>
+                            </li>
+                        </ul>
+                        <?php endif; ?>
+                        
+                    </div>
+                    <?php endif; ?>
+                    
+                    <h4 class="list-group-item-heading"><?= $quote->title ?> <small><?= $quote->sources ?></small></h4>
+                    <p class="list-group-item-text small">
+                        <span title="Created"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> <?= date('M d, Y', strtotime($quote->created)) ?></span>
+                    </p>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+            
+            <?php
+                if($pagination)
+                    $this->partial('shared/pagination', ['pagination'=>$pagination]);
+            ?>
+        </div>
+    </div>
+</div>
+
+<?php $this->partial('shared/footer'); ?>
