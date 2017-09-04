@@ -14,3 +14,4 @@ CREATE TABLE IF NOT EXISTS `quote` (
     `sources` VARCHAR(150),
     `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX `by_group` ON `quote` ( `group` );
